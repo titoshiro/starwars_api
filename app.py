@@ -126,6 +126,26 @@ def add_personaje_to_favorites(personaje_id):
 
     return jsonify({"message": f"Personaje with ID {personaje_id} added to favorites"}), 200
 
+@app.route('/favorite/planet/<int:planeta_id>', methods=['POST'])
+def add_planeta_to_favorites(planeta_id):
+    user_id = 1
+    user = db.session.get(User, user_id)
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+
+    planeta = Planeta.query.get(planeta_id)
+    if planeta is None:
+        return jsonify({"message": "Planeta not found"}), 404
+
+    # Agregar el planeta a los favoritos del usuario
+    user.add_favorite(planeta)
+    # Guardar los cambios en la base de datos
+    db.session.commit()
+
+    return jsonify({"message": f"Planeta with ID {planeta_id} added to favorites"}), 200
+
+
+
 @app.route('/favorite/personaje/<int:personaje_id>', methods=['DELETE'])
 def remove_people_from_favorites(personaje_id):
     user_id = 1
